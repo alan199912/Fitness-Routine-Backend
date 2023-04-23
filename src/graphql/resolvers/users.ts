@@ -92,6 +92,9 @@ export const usersResolvers = {
 
         const user = await userRepository.findOne({
           where: { id: +userAuthenticated.id },
+          relations: {
+            days: true,
+          },
         });
 
         if (!user) {
@@ -177,11 +180,7 @@ export const usersResolvers = {
         });
 
         if (!user) {
-          throw new UserInputError('User not found', {
-            errors: {
-              message: 'User not found',
-            },
-          });
+          throw new UserInputError('User not found');
         }
 
         const day = await dayRepository.findOne({
@@ -189,15 +188,16 @@ export const usersResolvers = {
         });
 
         if (!day) {
-          throw new UserInputError('Day not found', {
-            errors: {
-              message: 'Day not found',
-            },
-          });
+          throw new UserInputError('Day not found');
         }
 
         if (user.days === null) {
           user.days = [];
+        }
+
+        if (user.days.find((d) => d.id === Number(dayId))) {
+          user.days = user.days.filter((d) => d.id !== Number(dayId));
+          return await userRepository.save(user);
         }
 
         user.days.push(
