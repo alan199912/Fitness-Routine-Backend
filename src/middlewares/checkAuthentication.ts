@@ -6,7 +6,11 @@ import { User } from '../interfaces/user';
 dotenv.config();
 
 export default ({ req }: ExpressContext) => {
-  const { authorization } = req.headers;
+  const { authorization, client_id, client_secret } = req.headers;
+
+  if (client_id !== process.env.CLIENT_ID || client_secret !== process.env.CLIENT_SECRET) {
+    throw new AuthenticationError('Unauthorized');
+  }
 
   if (authorization) {
     const token = authorization.split('Bearer ')[1];
@@ -14,7 +18,6 @@ export default ({ req }: ExpressContext) => {
     if (token) {
       try {
         const user = jwt.verify(token, process.env.SECRET_JWT as string) as User;
-        console.log('[USER]', user);
         return user;
       } catch (error) {
         console.log(error);

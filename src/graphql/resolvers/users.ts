@@ -35,6 +35,74 @@ export const usersResolvers = {
         throw new Error(error);
       }
     },
+    verifyToken: async (_: User, __: any, context: ExpressContext) => {
+      try {
+        const userAuthenticated = checkAuthentication(context);
+
+        if (!userAuthenticated) {
+          throw new UserInputError('User not authenticated');
+        }
+
+        const user = await userRepository.findOne({
+          where: { id: +userAuthenticated.id },
+        });
+
+        return !!user;
+      } catch (error) {
+        return false;
+      }
+    },
+    getUserById: async (_: User, { id }: { id: number }, context: ExpressContext) => {
+      try {
+        const userAuthenticated = checkAuthentication(context);
+        console.log('[GET AUTH]', userAuthenticated);
+
+        if (!userAuthenticated) {
+          throw new UserInputError('User not authenticated');
+        }
+
+        if (+userAuthenticated.id !== +id) {
+          throw new UserInputError('User not authorized');
+        }
+
+        const user = await userRepository.findOne({
+          where: { id },
+        });
+
+        console.log('[GET USER]', user);
+
+        if (!user) {
+          throw new UserInputError('User not found');
+        }
+
+        console.log('[GET USER BY ID]', user);
+        return user;
+      } catch (error) {
+        console.log('GET user by id error', error);
+        throw new Error(error);
+      }
+    },
+    getUser: async (_: User, __: any, context: ExpressContext) => {
+      try {
+        const userAuthenticated = checkAuthentication(context);
+
+        if (!userAuthenticated) {
+          throw new UserInputError('User not authenticated');
+        }
+
+        const user = await userRepository.findOne({
+          where: { id: +userAuthenticated.id },
+        });
+
+        if (!user) {
+          throw new UserInputError('User not found');
+        }
+
+        return user;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
   },
   Mutation: {
     register: async (_: User, { username, email, password }: Register) => {

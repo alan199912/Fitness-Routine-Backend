@@ -4,6 +4,9 @@ export const usersTypeDefs = gql`
   type Query {
     users: [User]
     checkUsernameTaken(username: String!): Boolean!
+    verifyToken: Boolean!
+    getUserById(id: ID!): User!
+    getUser: User!
   }
 
   type Mutation {
