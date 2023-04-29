@@ -166,6 +166,7 @@ export const usersResolvers = {
         throw new Error(error);
       }
     },
+    // TODO: MOVE TO DAY RESOLVER
     choiseDay: async (_: User, { dayId }: ChoiseDay, context: ExpressContext) => {
       const userAuthenticated = checkAuthentication(context);
 

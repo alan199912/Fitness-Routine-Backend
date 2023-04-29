@@ -15,7 +15,7 @@ export const dayResolvers = {
 
         return days;
       } catch (error) {
-        throw new Error(error);
+        console.log(error);
       }
     },
   },

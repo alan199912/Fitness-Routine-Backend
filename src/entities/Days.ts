@@ -22,7 +22,7 @@ export class Days {
   user: Users;
 
   @ManyToMany(() => Excersices, (excersice) => excersice.id)
-  excersice: Excersices;
+  excersice: Excersices[];
 
   @CreateDateColumn()
   createdAt: Date;
